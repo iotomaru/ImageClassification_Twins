@@ -3,8 +3,13 @@ import pprint
 from PIL import Image
 
 def main():
-  model = tf.keras.applications.vgg16.VGG16(weights='imagenet', include_top=False)
-  model.summary()
+  vgg16 = tf.keras.applications.vgg16.VGG16(weights='imagenet', include_top=False)
+  # model.summary()
+  
+  # 新たなFC層を追加
+
+  # VGG16とFC層を結合してモデルを作成
+
   
   # img_pil = tf.keras.preprocessing.image.load_img(
   #   "data/test/doll.jpg", target_size=(224,224)

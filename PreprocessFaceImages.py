@@ -24,7 +24,7 @@ def main():
 
   output_csv_filepath = output_annotated_dir_path + "\\facedetect_results.csv"
 
-  with open(output_csv_filepath, ('w')) as outf:
+  with open(output_csv_filepath, ('a')) as outf:
     cnt = 0
     for f in glob.glob(input_dir_path + '\\*.jpg'):
       print(f)
