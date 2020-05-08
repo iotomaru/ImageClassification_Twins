@@ -1,12 +1,16 @@
 # 顔認識結果が記録されたcsvファイルに正解ラベル情報を適用する。
 
+import cv2
 import sys, glob, os
+from PIL import Image
+import matplotlib.pyplot as plt
 
 def main():
-  if len (sys.argv) == 4:
+  if len (sys.argv) == 5:
     input_csv_path = sys.argv[1]
-    input_labeled_images_dir = sys.argv[2]
-    output_csv_path = sys.argv[3]
+    input_resized_images_dir = sys.argv[2]
+    input_labeled_images_dir = sys.argv[3]
+    output_images_path = sys.argv[4]
   else:
     print('Usage: input.csv labeled_images_dir output.csv')
     sys.exit(1)
@@ -19,27 +23,42 @@ def main():
 
   count_map = {}
   for label in labels:
+    if not os.path.exists(output_images_path + '\\' + label):
+      os.mkdir(output_images_path + '\\' + label)
+    #
     count_map[label] = 0
   #
 
-  with open(output_csv_path, ('w')) as outf:
-    with open(input_csv_path) as inputf:
-      cnt = 0
-      for line in inputf:
-        line_strip = line.strip()
-        line_list = line_strip.split(',')
-        line_strip_replaced = line_strip
+  with open(input_csv_path) as inputf:
+    cnt = 0
+    for line in inputf:
+      line_strip = line.strip()
+      line_list = line_strip.split(',')
 
-        for label in labels:
-          if os.path.exists(input_labeled_images_dir + '\\' + label + '\\' + line_list[0]):
-            print ('[' + str(cnt) + '] ' + label)
-            line_strip_replaced = line_strip.replace('dummylabel', label)
-            count_map[label] += 1
-          #
+      for label in labels:
+        if os.path.exists(input_labeled_images_dir + '\\' + label + '\\' + line_list[0]):
+          print ('[' + str(cnt) + '] ' + label)
+          count_map[label] += 1
+
+          original_filepath = input_resized_images_dir + '\\' + (line_list[0])[9:]
+          image_org = cv2.imread(original_filepath)
+          print(original_filepath)
+
+          # 画像を切り抜いて保存する         
+          x_start = int(line_list[1])
+          x_end = x_start + int(line_list[3])
+          y_start = int(line_list[2])
+          y_end = y_start + int(line_list[4])
+          print(str(x_start) + ',' + str(x_end) + ',' + str(y_start) + ',' + str(y_end))
+
+          image_cropped = image_org[y_start:y_end, x_start:x_end]
+          out_img_filepath = output_images_path + '\\' + label + '\\' + line_list[0]
+          print(out_img_filepath)
+
+          cv2.imwrite(out_img_filepath, image_cropped)
         #
-        outf.write(line_strip_replaced + '\n')
-        cnt += 1
       #
+      cnt += 1
     #
   #
 
