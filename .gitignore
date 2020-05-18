@@ -127,3 +127,5 @@ dmypy.json
 data/*
 tmp/*
 resized/*
+vgg16_fine_imageclassify_twins.csv
+vgg16_fine_imageclassify_twins.h5
